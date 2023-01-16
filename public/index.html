@@ -37,6 +37,7 @@
         });
         socket.on('messageToClient', (data) => {
             chatBox.value += `${data.msg}\r\n`;
+            chatBox.scrollTop = chatBox.scrollHeight;
         });
 
         const chatMsg = document.querySelector('#chat-msg');
