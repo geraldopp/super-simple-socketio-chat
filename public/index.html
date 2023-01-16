@@ -1,0 +1,56 @@
+<!doctype html>
+<html>
+<head>
+    <title>My Chat App</title>
+    <style>
+        #chat-container {
+            width: 400px;
+            margin: 0 auto;
+        }
+        #chat-container textarea {
+            min-width: 400px;
+            display: block;
+            min-height: 150px;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <div id="chat-container">
+            <p><b>Welcome to my chat app</b></p>
+            <form id="chat-form">
+                <textarea id="chat-box"></textarea>
+                <label for="message">Message:</label>
+                <input type="text" id="chat-msg" />
+                <button type="submit">Send</button>
+            </form>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.2/socket.io.js"></script>
+    <script>
+        const socket = io('http://localhost:8000');
+        const chatBox = document.querySelector('#chat-box');
+        socket.on('connect', () => {
+            console.log('Connection successful.');
+        });
+        socket.on('messageToClient', (data) => {
+            chatBox.value += `${data.msg}\r\n`;
+        });
+
+        const chatMsg = document.querySelector('#chat-msg');
+        const chatForm = document.querySelector('#chat-form');
+        chatForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            chatMsgValue = chatMsg.value;
+            chatMsg.value = '';
+            
+            if(socket.connected){
+                socket.emit('messageToServer', {msg: chatMsgValue});
+            }
+        });
+    </script>
+</body>
+
+</html>
